@@ -1,0 +1,40 @@
+#include <iostream>
+#include <vector>
+#include <map>
+
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+
+    vector<vector<int>> matrix(n, vector<int>(n));
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> matrix[i][j];
+        }
+    }
+
+    // Count frequencies
+    map<int, int> freqMap;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            freqMap[matrix[i][j]]++;
+        }
+    }
+
+    // Maximum elements in upper triangular (including diagonal)
+    int maxFreq = (n * (n + 1)) / 2;
+
+    // Check if any element exceeds maximum allowed repetition
+    for (const auto& [value, count] : freqMap) {
+        if (count > maxFreq) {
+            cout << "NO" << endl;
+            return 0;
+        }
+    }
+
+    cout << "YES" << endl;
+    return 0;
+}
