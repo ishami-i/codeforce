@@ -1,42 +1,72 @@
 #include <iostream>
 #include <vector>
+#include <unordered_map>
+#include <climits>
 
 using namespace std;
+
 int main() {
     int t;
     cin >> t;
+
     while (t--) {
         int n;
         cin >> n;
+
         vector<int> arr(n);
+
         for (int i = 0; i < n; i++) {
             cin >> arr[i];
         }
-        int counter = 0;
-        
-        while (true) {
-            bool is_equal = true;
-            for (int i = 1; i < n; i++) {
-                if (arr[i] != arr[0]) {
-                    is_equal = false;
+
+        // freq[value] = how many numbers can reach this value
+        unordered_map<int, int> freq;
+
+        // costSum[value] = total operations needed
+        unordered_map<int, int> costSum;
+
+        for (int x : arr) {
+
+            unordered_map<int, int> visited;
+
+            int steps = 0;
+            int cur = x;
+
+            while (true) {
+
+                // avoid duplicates
+                if (!visited.count(cur)) {
+                    visited[cur] = steps;
+
+                    freq[cur]++;
+                    costSum[cur] += steps;
+                }
+
+                if (cur == 1)
                     break;
-                }
+
+                if (cur % 2 == 1)
+                    cur++;
+                else
+                    cur /= 2;
+
+                steps++;
             }
-            if (is_equal) {
-                cout << counter << endl;
-                break;
-            }
-            for (int i = 0; i < n; i++) {
-                if (arr[i] % 2 == 1) {
-                    arr[i]++;
-                    counter++;
-                }
-            }
-            for (int i = 0; i < n; i++) {
-                arr[i] /= 2;
-            }
-            counter++;
         }
+
+        int answer = INT_MAX;
+
+        for (auto &p : freq) {
+            int value = p.first;
+
+            // reachable by all elements
+            if (freq[value] == n) {
+                answer = min(answer, costSum[value]);
+            }
+        }
+
+        cout << answer << endl;
     }
+
     return 0;
 }
